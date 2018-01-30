@@ -1,0 +1,30 @@
+1 下载nginx解压缩
+	./configure --prefix=/export/App/nginx --conf-path=/export/App/nginx/conf/nginx.conf --error-log-path=/export/App/nginx/log/error.log --pid-path=/export/App/nginx/conf/nginx.pid --lock-path=/export/App/nginx/conf/nginx.lock --user=nginx --group=nginx --with-http_ssl_module --with-http_flv_module
+
+2 下载php源码包解压缩
+	./configure --prefix=/export/App/php --with-config-file-path=/export/App/php/etc  --with-curl --with-freetype-dir --with-gd --with-gettext --with-iconv-dir --with-kerberos --with-libdir=lib64 --with-libxml-dir --with-mysqli --with-openssl --with-pcre-regex --with-pdo-mysql --with-pdo-sqlite --with-pear --with-png-dir --with-xmlrpc --with-xsl --with-zlib --enable-fpm --enable-bcmath --enable-libxml --enable-inline-optimization --enable-gd-native-ttf --enable-mbregex --enable-mbstring --enable-opcache --enable-pcntl --enable-shmop --enable-soap --enable-sockets --enable-sysvsem --enable-xml --enable-zip
+
+3 从源码包复制php.ini
+	cp php.ini-development (或是 php.ini-production 用于服务器的，安全性较高) /usr/local/php/etc/php.ini
+
+4 # cd php/etc/  进入php安装目录
+	cp php-fpm.conf.default php-fpm.conf  添加php-fpm.conf 配置文件
+
+5 # cd php/sbin/php-fpm.d  进入php安装目录
+	cp www.conf.default www.conf   添加www.conf
+
+6 启动php
+	php/sbin/php-fpm
+
+7 配置nginx
+         location ~ \.php {
+
+            fastcgi_pass 127.0.0.1:9000;
+            fastcgi_index /index.php;
+
+            fastcgi_split_path_info       ^(.+\.php)(/.+)$;
+            fastcgi_param PATH_INFO       $fastcgi_path_info;
+            fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            include                       fastcgi_params;
+        }
